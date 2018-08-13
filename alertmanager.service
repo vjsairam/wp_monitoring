@@ -1,0 +1,18 @@
+[Unit]
+Description=Alert Manager
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/default/wp_monitoring
+ExecStartPre=-/usr/bin/docker pull prom/alertmanager
+ExecStart=/usr/bin/docker run --rm \
+	--name alertmanager \
+	--network=wp_monitoring \
+	-v ${wp_monitoring}/alertmanager.yml:/alertmanager.yml \
+	prom/alertmanager \
+	--config.file=/alertmanager.yml
+#--web.external-url=https://alerts.example.com
+
+[Install]
+WantedBy=multi-user.target
